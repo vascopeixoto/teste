@@ -1,0 +1,142 @@
+﻿@page "/tickets/create/"
+@using System.Security.Claims
+@inject HttpClient _client
+@inject NavigationManager _navManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+
+
+<h3 class="card-title">Criar Ticket</h3>
+<hr />
+<br />
+
+
+
+<EditForm Model="@ticket" OnValidSubmit="CreateTicket">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Nome:</label>
+        <div>
+            <InputText @bind-Value="@ticket.ticketName" class="form-control" />
+            <ValidationMessage For="@(() => ticket.ticketName)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Categoria: </label>
+        <div>
+            <select @bind="ticket.categoriaId" class="form-control">
+                <option value="">-- Selecione a Categoria --</option>
+                @if (Categorias != null)
+                {
+                    foreach (var categorias in Categorias)
+                    {
+                        <option value="@categorias.categoriaId">@categorias.categoriaName</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => ticket.categoriaId)" />
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="floatingTextarea">Comentários: </label>
+        <div>
+            <InputTextArea @bind-Value="@message.message" class="form-control" />
+            <ValidationMessage For="@(() => message.message)" />
+        </div>
+    </div>
+    <div class="form-control-file">
+        <InputFile OnChange="HandleFileSelection" multiple />
+    </div>
+    <br>
+    <div class="d-grid gap-2">
+        <button type="submit" class="form-group btn btn-success btn-block">
+            Criar ticket
+        </button>
+    </div>
+    <BackToList Target="tickets" />
+</EditForm>
+
+@code {
+    Ticket ticket = new Ticket();
+    Message message = new Message();
+    _File _file = new _File();
+    private IList<Ticket> Tickets;
+    private IList<Categoria> Categorias;
+    private IList<Estadoticket> EstadoTickets;
+    private IList<Message> Messages;
+    private List<_File> Files;
+    IReadOnlyList<IBrowserFile> selectedfile;
+
+
+    private string _authMessage;
+    private string _userId;
+    private string _first;
+
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetClaimsPrincipalData();
+        EstadoTickets = await _client.GetFromJsonAsync<List<Estadoticket>>(Endpoints.EstadoTicketsEndpoint);
+        Categorias = await _client.GetFromJsonAsync<List<Categoria>>($"{Endpoints.CategoriasEndpoint}");
+    }
+    private async void HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        var file = e.GetMultipleFiles();
+
+        selectedfile = file;
+    }
+    private async Task CreateTicket()
+    {
+        ticket.id = 1;
+        await _client.PostAsJsonAsync(Endpoints.TicketsEndpoint, ticket);
+        Tickets = await _client.GetFromJsonAsync<List<Ticket>>($"{Endpoints.TicketsEndpoint}");
+        ticket = Tickets.Last();
+        message.UserId = _userId;
+        message.Username = _authMessage;
+        message.CurrentUser = false;
+        message.ticketId = ticket.ticketId;
+        message.DateSent = DateTime.UtcNow;
+        await _client.PostAsJsonAsync(Endpoints.MessagesEndpoint, message);
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+        message = Messages.Last();
+        if (selectedfile != null)
+        {
+            foreach (var saveFile in selectedfile)
+            {
+               
+                var ext = System.IO.Path.GetExtension(saveFile.Name);
+                var picId = Guid.NewGuid().ToString().Replace("-", "");
+                _file.fileName = $"{picId}{ext}";
+                _file.msgId = message.msgId;
+                _file.FileContent = new byte[saveFile.Size];
+                await saveFile.OpenReadStream().ReadAsync(_file.FileContent);
+                await _client.PostAsJsonAsync(Endpoints.FileEndpoint, _file);
+            }
+        }
+        _navManager.NavigateTo("/");
+    }
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _authMessage = user.Identity.Name;
+            _claims = user.Claims;
+            _userId = user.FindFirst(c => c.Type == "sub")?.Value;
+        }
+        else
+        {
+            _authMessage = "The user is NOT authenticated.";
+        }
+    }
+
+
+}

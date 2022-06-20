@@ -1,0 +1,66 @@
+﻿@page "/categorias/"
+@inject HttpClient _client
+@inject IJSRuntime js
+
+<h3 class="card-title">List EstadoTicket</h3>
+<hr />
+<br />
+
+@if (Categorias == null)
+{
+    <div class="alert alert-info">Loading EstadoTickets... </div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Categorias)
+            {
+                <tr>
+                    <td>@item.categoriaName</td>
+                    <td>
+                        <a href="/estadoTickets/view/@item.categoriaId" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/estadoTickets/edit/@item.categoriaId" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(item.categoriaId))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Categoria> Categorias;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Categorias = await _client.GetFromJsonAsync<List<Categoria>>("api/Categorias");
+    }
+
+    async Task Delete(int categoriaID)
+    {
+        var categoria = Categorias.First(q => q.categoriaId == categoriaID);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want ti delete {categoria.categoriaName}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"api/EstadoTickets/{categoriaID}");
+            await OnInitializedAsync();
+        }
+
+
+    }
+
+
+}
+

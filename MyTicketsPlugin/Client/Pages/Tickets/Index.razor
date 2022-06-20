@@ -1,0 +1,81 @@
+﻿@page "/tickets/"
+@inject HttpClient _client
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity;
+@using System.Security.Claims;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+@inject IJSRuntime js
+
+<h3 class="card-title">List Ticket</h3>
+<hr />
+<br />
+<a href="/tickets/create/" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Criar
+</a>
+<br />
+<br />
+
+@if (Tickets == null)
+{
+    <div class="alert alert-info">Loading Tickets... </div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Tickets)
+            {
+                <tr>
+                    <td>@item.ticketId</td>
+                    <td>@item.ticketName</td>
+                    <td>@item.Categoria.categoriaName</td>
+                    <td>@item.Estadoticket.tipoEstado</td>
+                    <td>
+                        <a href="/tickets/view/@item.ticketId" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/tickets/edit/@item.ticketId" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(item.ticketId))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Ticket> Tickets;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Tickets = await _client.GetFromJsonAsync<List<Ticket>>("api/Tickets");
+    }
+    async Task Delete(int ticketID)
+    {
+        var ticket = Tickets.First(q => q.ticketId == ticketID);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want ti delete {ticket.ticketId}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"api/Tickets/{ticketID}");
+            await OnInitializedAsync();
+        }
+
+
+    }
+
+
+}

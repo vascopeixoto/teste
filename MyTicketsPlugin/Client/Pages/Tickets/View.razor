@@ -1,0 +1,327 @@
+﻿@page "/tickets/view/{id:int}"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.SignalR.Client
+@inject HttpClient _client
+@inject IHttpClientFactory _httpClientFicatory
+@inject NavigationManager _navManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<asp:Content id="content2" ContentPlaceHolderId="MianContent" runat="Server"></asp:Content>
+
+<img src style="display:none" onerror='sdown()'>
+
+<div class="teste">
+    <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px; overflow-x: hidden;">
+        <div class="row" style="margin-bottom: 15px; align-items: center; justify-content: center; width: 90%;">
+
+            <a class="col-lg-3 col-3" href="/" role="button">
+                <img src="/Identity/res/admin/images/1216.png">
+            </a>
+            <AuthorizeView Roles="Admin">
+                <Authorized Context="Auth">
+                    <div class="login101-form-title col-lg-5 col-5" style="font-size: 20px; width: 122px;">
+                        <EditForm Model="@ticket.id" OnValidSubmit="EditStatus">
+                            <select @bind="ticket.id" class="form-control">
+                                <option value="">-- Selecione o Estado --</option>
+                                @if (EstadoTickets != null)
+                                {
+                                    foreach (var status in EstadoTickets)
+                                    {
+                                        <option value="@status.id">@status.tipoEstado</option>
+                                    }
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => ticket.id)" />
+                            <button type="submit" class="btn btn-primary col-lg-3 col-3" style="width: 70px; margin-left: 10px;">Salvar</button>
+
+                        </EditForm>
+                    </div>
+
+                </Authorized>
+                <NotAuthorized>
+                    <span class="login101-form-title col-lg-3 col-3" style="font-size: 20px; margin-left: 15px;">
+                        @foreach (var estado in EstadoTickets)
+                        {
+                            if (estado.id == ticket.id)
+                            {
+                                <span class="login101-form-title col-lg-3 col-3" style="font-size: 20px; margin-left: 15px;">
+                                    @estado.tipoEstado
+                                </span>
+                            }
+                        }
+                    </span>
+                </NotAuthorized>
+            </AuthorizeView>
+            <span class="login101-form-title col-lg-5 col-12">
+                Ticket: @ticket.ticketName #@ticket.ticketId
+            </span>
+
+        </div>
+
+        <EditForm style="width:100%;padding:10px;" Model="@ticket">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="messages" id="scrolldown">
+                @if (Comments != null)
+                {
+                    if (Files != null)
+                    {
+                        @if (!Comments.Any())
+                        {
+                            <p>Sem comentários, mande o primeiro!</p>
+                        }
+
+                        @foreach (var msg in Comments)
+                        {
+                            <div class="row mb-3 d-flex @(msg.Username == _authMessage ? "justify-content-end" : "")">
+                                <div class="card shadow @(msg.Username == _authMessage ? "primary mr-5" : "ml-5")" style="width: 60%;">
+                                    <div class="card-header">
+                                        @(msg.Username == _authMessage ? "You" : msg.Username)
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">@msg.message</li>
+                                    </ul>
+                                    <div class="card-footer">
+
+                                        <div class="dropdown">
+                                            <button class="btn btn-light btn-sm text-btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Anexos
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                @foreach (var file in Files)
+                                                {
+                                                    if (file.msgId == msg.msgId)
+                                                    {
+                                                        <a @onclick="@(() => DownLoadImage(file.fileUrl, file.fileName))" class="dropdown-item">
+                                                            @file.fileName
+                                                        </a>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                        <span class="small">@msg.DateSent.ToString("dddd, dd MMMM yyyy")</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                    }
+                }
+            </div>
+            <div class="container" style="margin-top: 20px; width: 90%;">
+                <div class="form-floating mb-3">
+                    <textarea @bind="messageInput" id="floatingTextarea" style="background-color: rgb(241, 241, 241);" class="form-control" placeholder="Deixe uma mensagem"></textarea>
+                    <label for="floatingTextarea">Responder:</label>
+                </div>
+
+                <div class="row" style="width: 100%; justify-content: center;">
+                    <div class="col-lg-4 col-12 botao">
+                        <InputFile OnChange="HandleFileSelection" multiple />
+
+                    </div>
+
+                    <button type="button" @onclick="Send" disabled="@(!IsConnected)" class="btn btn-primary col-lg-3 col-12 botao1">Enviar</button>
+
+
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+<div class="modal fade" id="staticBackdrop2" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <p style="text-align: center; color: black; font-size: 20px;">Anexos:</p>
+                <div>
+                    <ul style="padding-left: 0;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    bool as_msg;
+    [Parameter] public int id { get; set; }
+    Ticket? ticket = new Ticket();
+    Message? message = new Message();
+    Message? message2 = new Message();
+    Message? comment = new Message();
+
+    _File _file = new _File();
+    _File teste = new _File();
+
+    private HubConnection hubConnection;
+    private string messageInput;
+    private bool isUserReadonly = false;
+    private string usernameInput;
+    IReadOnlyList<IBrowserFile> selectedfile;
+
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+
+    private List<Message>? Messages;
+    private List<Message>? Comments;
+    private List<Ticket>? Tickets;
+    private IList<Categoria> Categorias;
+    private IList<Estadoticket> EstadoTickets;
+    private List<_File> Files;
+    private List<_File> FileUp;
+
+    private List<string> FilesNames;
+
+    private string _authMessage;
+    private string _userId;
+    private string _first;
+    private string fileUpName;
+
+    ElementReference TextAreaRef;
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetClaimsPrincipalData();
+        usernameInput = _authMessage;
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(_navManager.ToAbsoluteUri("/chathub"))
+            .Build();
+        hubConnection.On<string, string, string>("ReceiveMessage", (user, message, filename) =>
+        {
+            Comments.Add(new Message { Username = user, message = message, CurrentUser = user == usernameInput, UserId = _userId, DateSent = DateTime.UtcNow });
+
+
+            FileUp.Add(new _File { fileName = filename });
+
+            global::System.Console.WriteLine("first");
+            StateHasChanged();
+        });
+        await hubConnection.StartAsync();
+        EstadoTickets = await _client.GetFromJsonAsync<List<Estadoticket>>(Endpoints.EstadoTicketsEndpoint);
+        Categorias = await _client.GetFromJsonAsync<List<Categoria>>($"{Endpoints.CategoriasEndpoint}");
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+        Files = await _client.GetFromJsonAsync<List<_File>>($"{Endpoints.FileEndpoint}");
+        Comments = Messages.FindAll(s => s.ticketId == id);
+    }
+
+
+
+
+    private async void HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        StateHasChanged();
+        var file = e.GetMultipleFiles();
+
+        selectedfile = file;
+        StateHasChanged();
+    }
+
+    private async Task Send()
+    {
+        if (!string.IsNullOrEmpty(usernameInput) && !string.IsNullOrEmpty(messageInput))
+        {
+            await CreateComment();
+            FileUp = await _client.GetFromJsonAsync<List<_File>>($"{Endpoints.FileEndpoint}");
+            Files = await _client.GetFromJsonAsync<List<_File>>($"{Endpoints.FileEndpoint}");
+            Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+            teste = FileUp.Last();
+            fileUpName = teste.fileName;
+            isUserReadonly = true;
+            messageInput = string.Empty;
+        }
+    }
+    private async Task DownLoadImage(string fileUrl, string fileName)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, fileUrl);
+        var httpClient = _httpClientFicatory.CreateClient();
+        var response = await httpClient.SendAsync(request);
+        var imgStream = await response.Content.ReadAsStreamAsync();
+        using var streamRef = new DotNetStreamReference(stream: imgStream);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        ticket = await _client.GetFromJsonAsync<Ticket>($"{Endpoints.TicketsEndpoint}/{id}");
+    }
+
+    private async Task CreateComment()
+    {
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+        message.UserId = _userId;
+        message.Username = _authMessage;
+        message.message = messageInput;
+        message.CurrentUser = false;
+        message.ticketId = ticket.ticketId;
+        message.DateSent = DateTime.UtcNow;
+        await _client.PostAsJsonAsync(Endpoints.MessagesEndpoint, message);
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+        if (selectedfile != null)
+        {
+            foreach (var saveFile in selectedfile)
+            {
+
+                var ext = System.IO.Path.GetExtension(saveFile.Name);
+                var picId = Guid.NewGuid().ToString().Replace("-", "");
+                _file.fileUrl = $"{picId}{ext}";
+                _file.fileName = $"{saveFile.Name}";
+
+                message2 = Messages.Last();
+                _file.msgId = message2.msgId;
+                _file.FileContent = new byte[saveFile.Size];
+                await saveFile.OpenReadStream().ReadAsync(_file.FileContent);
+                await _client.PostAsJsonAsync(Endpoints.FileEndpoint, _file);
+
+            }
+        }
+    }
+
+    async Task EditStatus()
+    {
+        global::System.Console.WriteLine(ticket.ticketId);
+        global::System.Console.WriteLine(ticket.ticketName);
+        global::System.Console.WriteLine(ticket.categoriaId);
+        global::System.Console.WriteLine(ticket.id);
+        global::System.Console.WriteLine(ticket.UserId);
+
+        await _client.PutAsJsonAsync($"{Endpoints.TicketsEndpoint}/{id}", ticket);
+        _navManager.NavigateTo("/");
+    }
+
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _authMessage = user.Identity.Name;
+            _claims = user.Claims;
+            _userId = user.FindFirst(c => c.Type == "sub")?.Value;
+            _first = $"FirstName: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+        }
+        else
+        {
+            _authMessage = "The user is NOT authenticated.";
+        }
+    }
+}

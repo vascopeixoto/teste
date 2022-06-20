@@ -1,0 +1,21 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<div class="top-row px-4 auth" style="margin-top: 20px">
+    <div class="dropdown">
+        <a role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="/Identity/res/admin/images/kisspng-login-google-account-computer-icons-user-activity-5ac6bbe74aa7f1.6157264215229736713058.png">
+        </a>
+        <ul class="dropdown-menu" style="margin-top:20px;" aria-labelledby="dropdownMenuButton1">
+            <li class="nav-item" style="text-align:center;"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index" style="color:black;">Perfil</a></li>
+            <li class="nav-item" style="text-align:center;"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email" style="color:black;">Alterar Email</a></li>
+            <li class="nav-item" style="text-align:center;"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword" style="color:black;">Alterar Palavra-Passe</a></li>
+            <li class="nav-item" style="text-align:center;"><a class="nav-link" href="/" style="color:black;">Voltar</a></li>
+        </ul>
+    </div>
+</div>
+<ul class="nav nav-pills flex-column">
+    
+
+</ul>
