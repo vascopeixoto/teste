@@ -35,6 +35,20 @@ namespace MyTicketsPlugin.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTicket(int id)
         {
+            var ticket = await _unitOfWork.Tickets.Get(q => q.ticketId == id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(ticket);
+        }
+
+        // GET: /Categorias/5/details
+        [HttpGet("{id}/{details}")]
+        public async Task<IActionResult> GetTicketDetails(int id)
+        {
             var ticket = await _unitOfWork.Tickets.Get(q => q.ticketId == id,
                 includes: q => q.Include(x => x.Categoria).Include(x => x.Estadoticket));
 

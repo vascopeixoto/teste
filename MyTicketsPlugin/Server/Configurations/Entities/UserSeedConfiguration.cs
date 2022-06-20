@@ -10,6 +10,8 @@ namespace MyTicketsPlugin.Server.Configurations.Entities
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
            var hasher = new PasswordHasher<ApplicationUser>();
+           var pass = hasher.HashPassword(null, "P@ssword1");
+
            builder.HasData(
            new ApplicationUser
            {
@@ -17,21 +19,21 @@ namespace MyTicketsPlugin.Server.Configurations.Entities
                Email = "admin@localhost.com",
                NormalizedEmail = "ADMIN@LOCALHOST.COM",
                FirstName = "Admin",
-               LastName = "User",
-               UserName = "Admin",
-               NormalizedUserName = "ADMIN",
-               PasswordHash = hasher.HashPassword(null, "P@ssword1")
+               LastName = "Suporte",
+               UserName = "admin@localhost.com",
+               NormalizedUserName = "ADMIN@LOCALHOST.COM",
+               PasswordHash = pass
            },
              new ApplicationUser
              {
                  Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                  Email = "user@localhost.com",
                  NormalizedEmail = "USER@LOCALHOST.COM",
-                 FirstName = "System",
-                 LastName = "User",
-                 UserName = "User@localhost.com",
+                 FirstName = "User",
+                 LastName = "System",
+                 UserName = "user@localhost.com",
                  NormalizedUserName = "USER@LOCALHOST.COM",
-                 PasswordHash = hasher.HashPassword(null, "P@ssword1")
+                 PasswordHash = pass
              }
             );
         }

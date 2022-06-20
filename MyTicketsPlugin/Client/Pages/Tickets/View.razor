@@ -1,5 +1,7 @@
 ﻿@page "/tickets/view/{id:int}"
+@attribute [Authorize]
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.SignalR.Client
 @inject HttpClient _client
@@ -35,7 +37,7 @@
                                 }
                             </select>
                             <ValidationMessage For="@(() => ticket.id)" />
-                            <button type="submit" class="btn btn-primary col-lg-3 col-3" style="width: 70px; margin-left: 10px;">Salvar</button>
+                            <button type="submit" class="btn btn-primary col-lg-3 col-3" style="width: 70px; margin: 5px;">Salvar</button>
 
                         </EditForm>
                     </div>
@@ -120,7 +122,7 @@
                 </div>
 
                 <div class="row" style="width: 100%; justify-content: center;">
-                    <div class="col-lg-4 col-12 botao">
+                    <div class="col-lg-6 col-12 botao">
                         <InputFile OnChange="HandleFileSelection" multiple />
 
                     </div>
@@ -160,6 +162,8 @@
     Message? message = new Message();
     Message? message2 = new Message();
     Message? comment = new Message();
+    private long maxLengthFile = 50000000;
+
 
     _File _file = new _File();
     _File teste = new _File();
@@ -287,11 +291,12 @@
                 message2 = Messages.Last();
                 _file.msgId = message2.msgId;
                 _file.FileContent = new byte[saveFile.Size];
-                await saveFile.OpenReadStream().ReadAsync(_file.FileContent);
+                await saveFile.OpenReadStream(maxLengthFile).ReadAsync(_file.FileContent);
                 await _client.PostAsJsonAsync(Endpoints.FileEndpoint, _file);
 
             }
         }
+        _navManager.NavigateTo($"/tickets/view/{ticket.ticketId}",true);
     }
 
     async Task EditStatus()

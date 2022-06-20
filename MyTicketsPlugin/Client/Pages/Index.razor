@@ -1,4 +1,5 @@
 ﻿@page "/"
+@attribute [Authorize]
 @inject HttpClient _client
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Identity;
@@ -14,241 +15,241 @@
     <Authorized Context="Auth">
         @if (Tickets1 == null)
         {
-            <div class="alert alert-info">... </div>
+        <div class="alert alert-info">... </div>
         }
         else
         {
-            <div class="teste">
-                <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
-                    <div class="row" style="align-items: center; justify-content: center; width: 90%;">
-                        <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
+        <div class="teste">
+            <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
+                <div class="row" style="align-items: center; justify-content: center; width: 90%;">
+                    <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
 
 
-                        <span class="login101-form-title col-lg-8 col-4">
-                            Tickets
-                        </span>
-                    </div>
-
-                    <table id="ticketsTable" class="display nowrap" style="width:100%">
-                        <thead style="font-size:12px">
-                            <tr>
-                                <th scope="col" class="thh">Ticket ID</th>
-                                <th scope="col" class="thh">Nome Ticket</th>
-                                <th scope="col" class="thh">Categoria</th>
-                                <th scope="col" class="thh">Estado</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Tickets1)
-                            {
-                                <tr>
-                                    <td>@item.ticketId</td>
-                                    <td>@item.ticketName</td>
-                                    <td>@item.Categoria.categoriaName</td>
-                                    <td>@item.Estadoticket.tipoEstado</td>
-                                    <td>
-                                        <a class="btn btn-secondary btn-sm letter" href="/tickets/view/@item.ticketId" role="button">Detalhes</a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <span class="login101-form-title col-lg-8 col-4">
+                        Tickets
+                    </span>
                 </div>
+
+                <table id="ticketsTable" class="display nowrap" style="width:100%">
+                    <thead style="font-size:12px">
+                        <tr>
+                            <th scope="col" class="thh">Ticket ID</th>
+                            <th scope="col" class="thh">Nome Ticket</th>
+                            <th scope="col" class="thh">Categoria</th>
+                            <th scope="col" class="thh">Estado</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Tickets1)
+                            {
+                        <tr>
+                            <td>@item.ticketId</td>
+                            <td>@item.ticketName</td>
+                            <td>@item.Categoria.categoriaName</td>
+                            <td>@item.Estadoticket.tipoEstado</td>
+                            <td>
+                                <a class="btn btn-secondary btn-sm letter" href="/tickets/view/@item.ticketId" role="button">Detalhes</a>
+                            </td>
+                        </tr>
+                            }
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <div class="modal fade" id="staticBackdrop" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="staticBackdrop" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
 
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" style="text-align: center;" id="staticBackdropLabel">Criar Ticket</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <EditForm Model="@ticket" OnValidSubmit="CreateTicket">
-                                <DataAnnotationsValidator />
-                                <ValidationSummary />
-                                <div class="form-group">
-                                    <label>Nome:</label>
-                                    <div>
-                                        <InputText @bind-Value="@ticket.ticketName" class="form-control" />
-                                        <ValidationMessage For="@(() => ticket.ticketName)" />
-                                    </div>
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="text-align: center;" id="staticBackdropLabel">Criar Ticket</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="@ticket" OnValidSubmit="CreateTicket">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="form-group">
+                                <label>Nome:</label>
+                                <div>
+                                    <InputText @bind-Value="@ticket.ticketName" class="form-control" />
+                                    <ValidationMessage For="@(() => ticket.ticketName)" />
                                 </div>
-                                <div class="form-group">
-                                    <label>Categoria: </label>
-                                    <div>
-                                        <select @bind="ticket.categoriaId" class="form-control">
-                                            <option value="">-- Selecione a Categoria --</option>
-                                            @if (Categorias != null)
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria: </label>
+                                <div>
+                                    <select @bind="ticket.categoriaId" class="form-control">
+                                        <option value="">-- Selecione a Categoria --</option>
+                                        @if (Categorias != null)
                                             {
                                                 foreach (var categorias in Categorias)
                                                 {
-                                                    <option value="@categorias.categoriaId">@categorias.categoriaName</option>
+                                        <option value="@categorias.categoriaId">@categorias.categoriaName</option>
                                                 }
                                             }
-                                        </select>
-                                        <ValidationMessage For="@(() => ticket.categoriaId)" />
-                                    </div>
+                                    </select>
+                                    <ValidationMessage For="@(() => ticket.categoriaId)" />
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label for="floatingTextarea">Comentários: </label>
-                                    <div>
-                                        <InputTextArea @bind-Value="@message.message" class="form-control" />
-                                        <ValidationMessage For="@(() => message.message)" />
-                                    </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="floatingTextarea">Comentários: </label>
+                                <div>
+                                    <InputTextArea @bind-Value="@message.message" class="form-control" />
+                                    <ValidationMessage For="@(() => message.message)" />
                                 </div>
-                                <div class="form-control-file">
-                                    <InputFile OnChange="HandleFileSelection" multiple />
-                                </div>
-                                <br>
-                                <div class="d-grid gap-2">
-                                    <button type="submit" data-bs-dismiss="modal" class="form-group btn btn-primary btn-block">
-                                        Criar ticket
-                                    </button>
-                                </div>
-                                <BackToList Target="tickets" />
-                            </EditForm>
-                        </div>
+                            </div>
+                            <div class="form-control-file">
+                                <InputFile OnChange="HandleFileSelection" multiple />
+                            </div>
+                            <br>
+                            <div class="d-grid gap-2">
+                                <button type="submit" data-bs-dismiss="modal" class="form-group btn btn-primary btn-block">
+                                    Criar ticket
+                                </button>
+                            </div>
+                            <BackToList Target="tickets" />
+                        </EditForm>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="modal fade" id="staticBackdrop1" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="staticBackdrop1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
 
-                    <!-- Modal content-->
-                    <div class="modal-content" style=" box-shadow: 0px 0px 15px 0px #858585; margin:10px">
-                        <div class="modal-body">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            <p style="text-align: center; color: black;">Ficheiros selecionados:</p>
-                            <div id="fileList"></div>
-                        </div>
+                <!-- Modal content-->
+                <div class="modal-content" style=" box-shadow: 0px 0px 15px 0px #858585; margin:10px">
+                    <div class="modal-body">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <p style="text-align: center; color: black;">Ficheiros selecionados:</p>
+                        <div id="fileList"></div>
                     </div>
                 </div>
             </div>
+        </div>
         }
     </Authorized>
     <NotAuthorized Context="Auth">
         @if (Tickets2 == null)
         {
-            <div class="alert alert-info">... </div>
+        <div class="alert alert-info">... </div>
         }
         else
         {
-            <div class="teste">
-                <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
-                    <div class="row" style="align-items: center; justify-content: center; width: 90%;">
-                        <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
+        <div class="teste">
+            <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
+                <div class="row" style="align-items: center; justify-content: center; width: 90%;">
+                    <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
 
 
-                        <span class="login101-form-title col-lg-8 col-4">
-                            Tickets
-                        </span>
-                    </div>
-
-                    <table id="ticketsTable" class="display nowrap" style="width:100%">
-                        <thead style="font-size:12px">
-                            <tr>
-                                <th scope="col" class="thh">Ticket ID</th>
-                                <th scope="col" class="thh">Nome Ticket</th>
-                                <th scope="col" class="thh">Categoria</th>
-                                <th scope="col" class="thh">Estado</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Tickets2)
-                            {
-                                <tr>
-                                    <td>@item.ticketId</td>
-                                    <td>@item.ticketName</td>
-                                    <td>@item.Categoria.categoriaName</td>
-                                    <td>@item.Estadoticket.tipoEstado</td>
-                                    <td>
-                                        <a class="btn btn-secondary btn-sm letter" href="/tickets/view/@item.ticketId" role="button">Detalhes</a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <span class="login101-form-title col-lg-8 col-4">
+                        Tickets
+                    </span>
                 </div>
+
+                <table id="ticketsTable" class="display nowrap" style="width:100%">
+                    <thead style="font-size:12px">
+                        <tr>
+                            <th scope="col" class="thh">Ticket ID</th>
+                            <th scope="col" class="thh">Nome Ticket</th>
+                            <th scope="col" class="thh">Categoria</th>
+                            <th scope="col" class="thh">Estado</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Tickets2)
+                            {
+                        <tr>
+                            <td>@item.ticketId</td>
+                            <td>@item.ticketName</td>
+                            <td>@item.Categoria.categoriaName</td>
+                            <td>@item.Estadoticket.tipoEstado</td>
+                            <td>
+                                <a class="btn btn-secondary btn-sm letter" href="/tickets/view/@item.ticketId" role="button">Detalhes</a>
+                            </td>
+                        </tr>
+                            }
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <div class="modal fade" id="staticBackdrop" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="staticBackdrop" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
 
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" style="text-align: center;" id="staticBackdropLabel">Criar Ticket</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <EditForm Model="@ticket" OnValidSubmit="CreateTicket">
-                                <DataAnnotationsValidator />
-                                <ValidationSummary />
-                                <div class="form-group">
-                                    <label>Nome:</label>
-                                    <div>
-                                        <InputText @bind-Value="@ticket.ticketName" class="form-control" />
-                                        <ValidationMessage For="@(() => ticket.ticketName)" />
-                                    </div>
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="text-align: center;" id="staticBackdropLabel">Criar Ticket</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="@ticket" OnValidSubmit="CreateTicket">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="form-group">
+                                <label>Nome:</label>
+                                <div>
+                                    <InputText @bind-Value="@ticket.ticketName" class="form-control" />
+                                    <ValidationMessage For="@(() => ticket.ticketName)" />
                                 </div>
-                                <div class="form-group">
-                                    <label>Categoria: </label>
-                                    <div>
-                                        <select @bind="ticket.categoriaId" class="form-control">
-                                            <option value="">-- Selecione a Categoria --</option>
-                                            @if (Categorias != null)
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria: </label>
+                                <div>
+                                    <select @bind="ticket.categoriaId" class="form-control">
+                                        <option value="">-- Selecione a Categoria --</option>
+                                        @if (Categorias != null)
                                             {
                                                 foreach (var categorias in Categorias)
                                                 {
-                                                    <option value="@categorias.categoriaId">@categorias.categoriaName</option>
+                                        <option value="@categorias.categoriaId">@categorias.categoriaName</option>
                                                 }
                                             }
-                                        </select>
-                                        <ValidationMessage For="@(() => ticket.categoriaId)" />
-                                    </div>
+                                    </select>
+                                    <ValidationMessage For="@(() => ticket.categoriaId)" />
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label for="floatingTextarea">Comentários: </label>
-                                    <div>
-                                        <InputTextArea @bind-Value="@message.message" class="form-control" />
-                                        <ValidationMessage For="@(() => message.message)" />
-                                    </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="floatingTextarea">Comentários: </label>
+                                <div>
+                                    <InputTextArea @bind-Value="@message.message" class="form-control" />
+                                    <ValidationMessage For="@(() => message.message)" />
                                 </div>
-                                <div class="form-control-file">
-                                    <InputFile OnChange="HandleFileSelection" multiple />
-                                </div>
-                                <br>
-                                <div class="d-grid gap-2">
-                                    <button type="submit" data-bs-dismiss="modal" class="form-group btn btn-primary btn-block">
-                                        Criar ticket
-                                    </button>
-                                </div>
-                                <BackToList Target="tickets" />
-                            </EditForm>
-                        </div>
+                            </div>
+                            <div class="form-control-file">
+                                <InputFile OnChange="HandleFileSelection" multiple />
+                            </div>
+                            <br>
+                            <div class="d-grid gap-2">
+                                <button type="submit" data-bs-dismiss="modal" class="form-group btn btn-primary btn-block">
+                                    Criar ticket
+                                </button>
+                            </div>
+                            <BackToList Target="tickets" />
+                        </EditForm>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="modal fade" id="staticBackdrop1" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="staticBackdrop1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
 
-                    <!-- Modal content-->
-                    <div class="modal-content" style=" box-shadow: 0px 0px 15px 0px #858585; margin:10px">
-                        <div class="modal-body">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            <p style="text-align: center; color: black;">Ficheiros selecionados:</p>
-                            <div id="fileList"></div>
-                        </div>
+                <!-- Modal content-->
+                <div class="modal-content" style=" box-shadow: 0px 0px 15px 0px #858585; margin:10px">
+                    <div class="modal-body">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <p style="text-align: center; color: black;">Ficheiros selecionados:</p>
+                        <div id="fileList"></div>
                     </div>
                 </div>
             </div>
+        </div>
         }
     </NotAuthorized>
 
@@ -258,7 +259,7 @@
 @code{
     private List<Ticket> Tickets1;
     private List<Ticket> Tickets2;
-
+    private long maxLengthFile = 50000000;
 
     Ticket ticket = new Ticket();
     Message message = new Message();
@@ -342,7 +343,7 @@
 
                 _file.msgId = message.msgId;
                 _file.FileContent = new byte[saveFile.Size];
-                await saveFile.OpenReadStream().ReadAsync(_file.FileContent);
+                await saveFile.OpenReadStream(maxLengthFile).ReadAsync(_file.FileContent);
                 await _client.PostAsJsonAsync(Endpoints.FileEndpoint, _file);
             }
         }

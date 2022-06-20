@@ -115,7 +115,7 @@ namespace MyTicketsPlugin.Server.Controllers
         private string CreateFile(byte[] file, string name)
         {
             var url = _httpContextAccessor.HttpContext.Request.Host.Value;
-            var path = $"{_webHostEnvironment.WebRootPath}\\uploads\\{name}";
+            var path = $"{_webHostEnvironment.WebRootPath}/uploads/{name}";
             var fileStream = System.IO.File.Create(path);
             fileStream.Write(file, 0, file.Length);
             fileStream.Close();

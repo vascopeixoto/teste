@@ -18,8 +18,8 @@ namespace MyTicketsPlugin.Server.Configurations.Entities
                  new IdentityRole
                  {
                      Id = "cbc43a8e-f7bb-4445-baaf-1add431ffbbf",
-                     Name = "Administrator",
-                     NormalizedName = "ADMINISTRATOR"
+                     Name = "Admin",
+                     NormalizedName = "ADMIN"
                  }
              );
         }
