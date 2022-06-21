@@ -192,16 +192,16 @@ namespace MyTicketsPlugin.Server.Migrations
                         new
                         {
                             Id = "cac43a6e-f7bb-4448-baaf-1add431ccbbf",
-                            ConcurrencyStamp = "986d9757-a9f2-40c6-9225-439c7f36e9e3",
+                            ConcurrencyStamp = "0f42a86d-5b8e-4ae5-ac2d-aaea178e9aec",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = "cbc43a8e-f7bb-4445-baaf-1add431ffbbf",
-                            ConcurrencyStamp = "cfa6bed6-dd3d-4523-9d2e-b72b820098d9",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
+                            ConcurrencyStamp = "abde8e94-bfab-475a-88fe-61250062ba02",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -404,37 +404,37 @@ namespace MyTicketsPlugin.Server.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "716ae255-d3e2-4812-90ec-29f39d666175",
+                            ConcurrencyStamp = "5aa54b05-1d34-4dd9-b204-236d7af9ca08",
                             Email = "admin@localhost.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
-                            LastName = "User",
+                            LastName = "Suporte",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDADBSRmW2lgbzVt7tdM+KL0GuKAohlobCM7HnRzvDj9U1kdwan+5heCMfb3LfPk1Q==",
+                            NormalizedUserName = "ADMIN@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "aef9ab95-6993-4335-b64c-cd159687564d",
+                            SecurityStamp = "266fb733-d060-405a-959b-32a201233cf9",
                             TwoFactorEnabled = false,
-                            UserName = "Admin"
+                            UserName = "admin@localhost.com"
                         },
                         new
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f3c68f8e-e36c-4184-9b5d-b7b28bc9a79f",
+                            ConcurrencyStamp = "9df5b4d0-e3c6-4f66-9929-3ac7e2545230",
                             Email = "user@localhost.com",
                             EmailConfirmed = false,
-                            FirstName = "System",
-                            LastName = "User",
+                            FirstName = "User",
+                            LastName = "System",
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMO1Wb/NypSJpSSlsJNBmLdtP3599zfvt0ryC3DyksZUwOEzjScOPGId2YOzJ0fRFQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e9a8f3b6-87e8-467a-9931-ce5ba9a7ccd3",
+                            SecurityStamp = "c41d7e40-f251-4b3f-8120-9b17bfe404ba",
                             TwoFactorEnabled = false,
-                            UserName = "User@localhost.com"
+                            UserName = "user@localhost.com"
                         });
                 });
 

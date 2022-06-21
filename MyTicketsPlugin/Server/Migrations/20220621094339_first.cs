@@ -249,7 +249,8 @@ namespace MyTicketsPlugin.Server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ticketName = table.Column<string>(type: "text", nullable: false),
                     categoriaId = table.Column<int>(type: "integer", nullable: false),
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -318,8 +319,8 @@ namespace MyTicketsPlugin.Server.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "cac43a6e-f7bb-4448-baaf-1add431ccbbf", "339c6b16-aea6-48ee-86a0-505884853ae5", "User", "USER" },
-                    { "cbc43a8e-f7bb-4445-baaf-1add431ffbbf", "92d80ff4-ae77-490f-a25b-5a56a6c34fcd", "Administrator", "ADMINISTRATOR" }
+                    { "cac43a6e-f7bb-4448-baaf-1add431ccbbf", "0f42a86d-5b8e-4ae5-ac2d-aaea178e9aec", "User", "USER" },
+                    { "cbc43a8e-f7bb-4445-baaf-1add431ffbbf", "abde8e94-bfab-475a-88fe-61250062ba02", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -327,8 +328,8 @@ namespace MyTicketsPlugin.Server.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "role" },
                 values: new object[,]
                 {
-                    { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "81c63a01-d91d-48fd-9a56-12c9384bd44e", "admin@localhost.com", false, "Admin", "User", false, null, "ADMIN@LOCALHOST.COM", "ADMIN", "AQAAAAEAACcQAAAAEODcb0h02Z/PNSDCttTopjn/ho6NBq1jH8T0T9IAnNq4JgeUpCI4Bc9cAZ4Z6lZdRg==", null, false, "30e8fb78-c995-4c7e-b823-3d4791b33d20", false, "Admin", null },
-                    { "9e224968-33e4-4652-b7b7-8574d048cdb9", 0, "d4fefc49-c87a-4c80-82a2-d3c9d86e63c3", "user@localhost.com", false, "System", "User", false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAEAACcQAAAAEMhd9X3HrSEE4GxePvaylfhyR8WfibNZwWRDnBbL/3L0ivf/EEFti/83rtKHoa3DBQ==", null, false, "378de3e0-9f6d-4cf4-8706-d81d16536af6", false, "User@localhost.com", null }
+                    { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "5aa54b05-1d34-4dd9-b204-236d7af9ca08", "admin@localhost.com", false, "Admin", "Suporte", false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==", null, false, "266fb733-d060-405a-959b-32a201233cf9", false, "admin@localhost.com", null },
+                    { "9e224968-33e4-4652-b7b7-8574d048cdb9", 0, "9df5b4d0-e3c6-4f66-9929-3ac7e2545230", "user@localhost.com", false, "User", "System", false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==", null, false, "c41d7e40-f251-4b3f-8120-9b17bfe404ba", false, "user@localhost.com", null }
                 });
 
             migrationBuilder.InsertData(

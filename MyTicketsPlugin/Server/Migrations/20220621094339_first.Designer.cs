@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyTicketsPlugin.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220617134442_first")]
+    [Migration("20220621094339_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -194,16 +194,16 @@ namespace MyTicketsPlugin.Server.Migrations
                         new
                         {
                             Id = "cac43a6e-f7bb-4448-baaf-1add431ccbbf",
-                            ConcurrencyStamp = "339c6b16-aea6-48ee-86a0-505884853ae5",
+                            ConcurrencyStamp = "0f42a86d-5b8e-4ae5-ac2d-aaea178e9aec",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = "cbc43a8e-f7bb-4445-baaf-1add431ffbbf",
-                            ConcurrencyStamp = "92d80ff4-ae77-490f-a25b-5a56a6c34fcd",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
+                            ConcurrencyStamp = "abde8e94-bfab-475a-88fe-61250062ba02",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -406,37 +406,37 @@ namespace MyTicketsPlugin.Server.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81c63a01-d91d-48fd-9a56-12c9384bd44e",
+                            ConcurrencyStamp = "5aa54b05-1d34-4dd9-b204-236d7af9ca08",
                             Email = "admin@localhost.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
-                            LastName = "User",
+                            LastName = "Suporte",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEODcb0h02Z/PNSDCttTopjn/ho6NBq1jH8T0T9IAnNq4JgeUpCI4Bc9cAZ4Z6lZdRg==",
+                            NormalizedUserName = "ADMIN@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "30e8fb78-c995-4c7e-b823-3d4791b33d20",
+                            SecurityStamp = "266fb733-d060-405a-959b-32a201233cf9",
                             TwoFactorEnabled = false,
-                            UserName = "Admin"
+                            UserName = "admin@localhost.com"
                         },
                         new
                         {
                             Id = "9e224968-33e4-4652-b7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d4fefc49-c87a-4c80-82a2-d3c9d86e63c3",
+                            ConcurrencyStamp = "9df5b4d0-e3c6-4f66-9929-3ac7e2545230",
                             Email = "user@localhost.com",
                             EmailConfirmed = false,
-                            FirstName = "System",
-                            LastName = "User",
+                            FirstName = "User",
+                            LastName = "System",
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMhd9X3HrSEE4GxePvaylfhyR8WfibNZwWRDnBbL/3L0ivf/EEFti/83rtKHoa3DBQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELVjlh60dIzJiMj7IBuS61vCbLyWeCW1NIGuhMInS4o/wDr1/+ckHNz8v6Ej6Ia8ug==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "378de3e0-9f6d-4cf4-8706-d81d16536af6",
+                            SecurityStamp = "c41d7e40-f251-4b3f-8120-9b17bfe404ba",
                             TwoFactorEnabled = false,
-                            UserName = "User@localhost.com"
+                            UserName = "user@localhost.com"
                         });
                 });
 
@@ -573,6 +573,10 @@ namespace MyTicketsPlugin.Server.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ticketId"));
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("categoriaId")
                         .HasColumnType("integer");

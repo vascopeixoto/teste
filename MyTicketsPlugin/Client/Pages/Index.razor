@@ -21,11 +21,11 @@
         {
         <div class="teste">
             <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
-                <div class="row" style="align-items: center; justify-content: center; width: 90%;">
+                <div class="row" style="align-items: center; justify-content: center; width: 90%; margin-top:10px">
                     <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
 
 
-                    <span class="login101-form-title col-lg-8 col-4">
+                    <span class="login101-form-title col-lg-8 col-4" style="font-weight: 700;">
                         Tickets
                     </span>
                 </div>
@@ -141,11 +141,11 @@
         {
         <div class="teste">
             <div class="container-login102 container-fluid tickets-form table-responsive" style="padding: 15px;">
-                <div class="row" style="align-items: center; justify-content: center; width: 90%;">
+                <div class="row" style="align-items: center; justify-content: center; width: 90%; margin-top: 10px">
                     <button type="button" class="btn btn-primary btnn col-lg-2 col-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Criar  </button>
 
 
-                    <span class="login101-form-title col-lg-8 col-4">
+                    <span class="login101-form-title col-lg-8 col-4" style="font-weight: 700;">
                         Tickets
                     </span>
                 </div>
@@ -260,6 +260,8 @@
     private List<Ticket> Tickets1;
     private List<Ticket> Tickets2;
     private long maxLengthFile = 50000000;
+    private bool veri = false;
+
 
     Ticket ticket = new Ticket();
     Message message = new Message();
@@ -313,7 +315,23 @@
     private async void HandleFileSelection(InputFileChangeEventArgs e)
     {
         var file = e.GetMultipleFiles();
-
+        foreach (var saveFile in file)
+        {
+            if (saveFile.Size > 5242880)
+            {
+                veri = true;
+            }
+        }
+        if (veri == true)
+        {
+            var confirm = await js.InvokeAsync<bool>("confirm", $"O ficheiro tem mais de 5mb de tamanho!");
+            if (confirm)
+            {
+                file = null;
+                await OnInitializedAsync();
+            }
+            veri = false;
+        }
         selectedfile = file;
     }
     private async Task CreateTicket()
